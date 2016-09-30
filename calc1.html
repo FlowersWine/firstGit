@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8' />
+		<title></title>
+		<style type="text/css">
+			#container{
+				border: 2px solid silver;
+				padding: 20px;
+			}
+			#calculator {
+				width:250px;
+				margin: 0 auto;
+				border: 5px solid black;
+			}
+			#keyboard-container {
+				width: 100%;
+			}
+			input {
+				padding: 6px;
+				width: 50px;
+				margin: 3px;
+			}
+			#screen {
+				width: 226px;
+				padding: 5px;
+				margin: 5px;
+				text-align: right;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container">
+			<div id="calculator">
+				<h3><input id="screen" type="text" value="0" /></h3>
+				<div id="keyboard-container">
+					<input type="button" value="7" />
+					<input type="button" value="8" />
+					<input type="button" value="9" />
+					<input type="button" value="+" />
+					<input type="button" value="4" />
+					<input type="button" value="5" />
+					<input type="button" value="6" />
+					<input type="button" value="-" />
+					<input type="button" value="1" />
+					<input type="button" value="2" />
+					<input type="button" value="3" />
+					<input type="button" value="*" />
+					<input type="button" value="0" />
+					<input type="button" value="C" />
+					<input type="button" value="=" />
+					<input type="button" value="/" />
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript">
+			window.onload = function (){
+				
+				var screen = document.getElementById('screen'); // 获取屏幕的input
+				
+				// 获取按钮容器
+				var container = document.getElementById('keyboard-container');
+				var inps = container.getElementsByTagName('input');
+				
+				for(var i = 0; i < inps.length; i++){ 
+					// 所有的input绑定点击事件，用handler函数统一处理
+					// 将按钮的value值作为参数传递给handler函数
+					inps[i].onclick = function (){
+						handler(this.value);
+					}
+				}
+				
+				var num1 = ""; // 存放第一个操作数
+				var num2 = ""; // 存放第二个操作数
+				var op = ""; // 存放+-*/四则运算符
+				function handler(value){
+					var result = 0;
+					
+					switch(value){
+						case "C":
+							// 按下C键清除一切（包括屏幕）
+							num1 = "";
+							num2 = "";
+							op = "";
+							screen.value = "0";
+							break;
+						case "=":
+							// 算结果
+							result = calculate(num1, num2, op);
+							// 显示结果
+							screen.value = result;
+							// 将结果放到第一个操作数那里
+							num1 = result + "";
+							// 清空num2, 防止操作符被按下时判断有误
+							num2 = ""; 
+							// 清空操作符
+							op = "";
+							break;
+						case "+":
+						case "-":
+						case "*":
+						case "/":
+							// 作等号的功能，将结果算一算，显示到屏幕上
+							if(num2 !== ""){
+								// 下面四行是=号的功能
+								result = calculate(num1, num2, op);
+								screen.value = result;
+								num1 = result + "";
+								num2 = "";
+							}
+							// 记录一下操作符
+							op = value;
+							break;
+						default:
+							if(op !== ""){ // 根据是否按下过操作符判断是第一个操作数还是第二个
+								num2 += value;
+								screen.value = num2;
+							}else {
+								num1 += value;
+								screen.value = num1;
+							}
+							break;
+					
+					}
+				}
+				
+				
+				// 封装一个可以做加减乘除四则运算的函数备用
+				function calculate(n1, n2, op){
+					switch (op){
+						case "+":
+							return parseFloat(n1) + parseFloat(n2);
+							break;
+						case "-":
+							return parseFloat(n1) - parseFloat(n2);
+							break;
+						case "*":
+							return parseFloat(n1) * parseFloat(n2);
+							break;
+						case "/":
+							return parseFloat(n1) / parseFloat(n2);
+							break;
+						default:break;
+					}
+				}
+				
+				
+			}
+		</script>
+	</body>
+</html>
